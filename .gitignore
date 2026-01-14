@@ -40,4 +40,5 @@ Testing
 temp
 config/config.h
 examples/coro_debug.cpp
+git_operation.md
 .cache
