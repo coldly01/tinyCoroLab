@@ -60,6 +60,7 @@ class scheduler;
  */
 class context
 {
+    using stop_cb=std::function<void()>;
 public:
     context() noexcept;
     ~context() noexcept                = default;
@@ -137,13 +138,21 @@ public:
     [[CORO_TEST_USED(lab2b)]] auto run(stop_token token) noexcept -> void;
 
     // TODO[lab2b]: Add more function if you need
+    auto process_work() noexcept -> void;
+    auto poll_work() noexcept -> void;
+    auto empty_wait_work() noexcept -> bool;
+
+    auto set_stop_cb(stop_cb cb) noexcept -> void;
 
 private:
     CORO_ALIGN engine   m_engine;
     unique_ptr<jthread> m_job;
     ctx_id              m_id;
 
+    atomic<size_t> m_num_wait_task{0}; ///< 等待任务计数器（所有 context 共享）
+
     // TODO[lab2b]: Add more member variables if you need
+    stop_cb m_stop_cb;
 };
 
 inline context& local_context() noexcept
